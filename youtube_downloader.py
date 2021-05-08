@@ -1,4 +1,4 @@
-import pytube
+from pytube import YouTube
 import tkinter as tk
 from tkinter import filedialog
 
@@ -16,6 +16,27 @@ TITLE = "YouTube Downloader"
 def findLocation():
     global FOLDER_NAME
     FOLDER_NAME = tk.filedialog.askdirectory()
+
+#donwload video
+def DownloadVideo():
+    choice = ytdchoices.get()
+    url = ytdEntry.get()
+
+    if(len(url)>1):
+        ytdError.config(text="")
+        yt = YouTube(url)
+
+        if(choice == choices[0]):
+            select = yt.streams.filter(progressive=True).first()
+
+        elif(choice == choices[1]):
+            select = yt.streams.filter(progressive=True,file_extension='mp4').last()
+
+        elif(choice == choices[2]):
+            select = yt.streams.filter(only_audio=True).first()
+
+        else:
+            ytdError.config(text="Paste Link again!!",fg="red")
 
 class Youtube_Downloader:
     def __init__(self):
@@ -45,7 +66,25 @@ class Youtube_Downloader:
         self.download_button.grid(column = 1, row = 4)
         return
 
-      
+    def __downloader(self, link, save_path = "", save_name = "", extension = "mp4"):
+        
+        yt = YouTube(link)
+        print(link)
+        yt_stream = yt.streams.filter(progressive=True, file_extension=extension).order_by('resolution').desc().first()
+        yt_stream.download(output_path = save_path, filename = save_name)
+
+        return
+
+  
+    def __get_link(self):
+        link = self.link_entry.get()
+        path = FOLDER_NAME
+        name = self.name_entry.get()
+        ext = self.ext_entry.get()
+
+        self.__downloader(link, path, name, ext)
+        
+        return
 
     def run(self):
         self.window.mainloop()
