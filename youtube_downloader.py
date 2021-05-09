@@ -6,7 +6,7 @@ from tkinter import ttk
 import os
 
 FOLDER_NAME = ""
-options = ["144p", "720p", "mp3"]
+options = ["lowest", "highest", "mp3"]
 
 WIDTH = 500
 HEIGHT = 400
@@ -61,12 +61,12 @@ class Youtube_Downloader:
         choice = self.option_box.get()
         yt = YouTube(link)
         if(choice == options[0]):
-            select = yt.streams.filter(progressive=True).first()
+            select = yt.streams.filter(progressive=True).get_lowest_resolution()
             select.download(output_path = save_path, filename = save_name)
         
 
         elif(choice == options[1]):
-            select = yt.streams.filter(progressive=True,file_extension='mp4').last()
+            select = yt.streams.filter(progressive=True,file_extension='mp4').get_highest_resolution()
             select.download(output_path = save_path, filename = save_name)
         
         elif(choice == options[2]):
