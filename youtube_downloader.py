@@ -4,7 +4,7 @@ from tkinter import filedialog
 from tkinter import ttk
 from tkinter import messagebox
 from tkinter import *
-from PIL import Image, ImageTk
+from playsound import playsound
 import os
 
 FOLDER_NAME = ""
@@ -18,6 +18,10 @@ RED = "#c4302b"
 BLACK = "#282828"
 
 TITLE = "YouTube Downloader"
+
+download_complete_sound = 'download_complete_sound.mp3'
+error_sound = 'error_sound.mp3'
+help_sound = 'help_sound.mp3'
 
 def find_location():
     global FOLDER_NAME
@@ -112,8 +116,9 @@ class Youtube_Downloader:
 
         return
     
-    # show help message box
+    # show help message box and play sound
     def get_help(self):
+        playsound(help_sound)
         messagebox.showinfo(title="Help",
         message="Hello! In order to download from YouTube, paste a valid Youtube link, choose a name for your file and a location, then choose the format and you're good to go!") 
     
@@ -121,10 +126,11 @@ class Youtube_Downloader:
     def get_format(self, link, save_path = "", save_name = ""):
         choice = self.option_box.get()
 
-        # check if a format chioce has been made, show error box
+        # check if a format chioce has been made, play sound and show error box
         if len(choice) == 0:
-           messagebox.showerror('Required Fields', 'No Download Options selected!')
-           return
+            playsound(error_sound)
+            messagebox.showerror('Required Fields', 'No Download Options selected!')
+            return
         
         yt = YouTube(link)
 
@@ -159,24 +165,31 @@ class Youtube_Downloader:
     def get_link(self):
         link = self.link_entry.get()
 
-        # if no link has been added, show error box
+        # if no link has been added, play sound and show error box
         if len(link) == 0:
+            playsound(error_sound)
             messagebox.showerror('Required Fields', 'No URL address provided!')
             return
 
-        # if the user did not introduce a youtube link, show error box
+        # if the user did not introduce a youtube link, play sound and show error box
         if "youtube.com" not in link:
+            playsound(error_sound)
             messagebox.showerror('Required Fields', 'Please provide Youtube Link!')
             return
 
-        # if the user did not introduce a valid youtube link, show error box
+        # if the user did not introduce a valid youtube link, play sound and show error box
         if self.is_valid_link(link) == False:
+            playsound(error_sound)
             messagebox.showerror('Required Fields', 'Please provide a valid Youtube Link!')
             return
 
+        # download
         path = FOLDER_NAME
         name = self.name_entry.get()
         self.get_format(link, path, name)
+
+        # play sound after download is complete
+        playsound(download_complete_sound)
         
         return
 
