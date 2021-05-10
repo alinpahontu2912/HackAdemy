@@ -8,10 +8,10 @@ from playsound import playsound
 import os
 
 FOLDER_NAME = ""
-options = ["lowest", "highest", "mp3"]
+options = ["mp4 lowest quality", "mp4 highest highest", "mp3"]
 
-WIDTH = 600
-HEIGHT = 450
+WIDTH = 700
+HEIGHT = 550
 
 WHITE = "#ffffff"
 RED = "#c4302b"
@@ -87,11 +87,11 @@ class Youtube_Downloader:
         self.empty_space.grid(column = 0, row = 1)
 
         # display entry for entering link
-        self.link_entry = tk.Entry(master = self.window, width = 60)
+        self.link_entry = tk.Entry(master = self.window, width = 60, font=("Petendo", 11, "bold"))
         self.link_entry.grid(column = 0, row = 4)
     
         # display entry for entering file name
-        self.name_entry = tk.Entry(master = self.window, width = 60)
+        self.name_entry = tk.Entry(master = self.window, width = 60, font=("Petendo", 11, "bold"))
         self.name_entry.grid(column = 0, row = 6)
 
         # display button image for choosing folder
@@ -102,7 +102,7 @@ class Youtube_Downloader:
         self.save_entry.grid(column = 0, row = 8)
     
         # display option box for entering quality of mp3 options
-        self.option_box = ttk.Combobox(self.window, values = options)
+        self.option_box = ttk.Combobox(self.window, values = options, font=("Petendo", 11, "bold"))
         self.option_box.grid(column = 0, row = 10)
 
         self.empty_space = tk.Label(self.window, bg = RED, fg = RED, text = "")
@@ -190,13 +190,12 @@ class Youtube_Downloader:
 
         # play sound after download is complete
         playsound(download_complete_sound)
-        
+
         return
 
     # app loop
     def run(self):
         self.window.mainloop()
-
         return
 
 def main():
