@@ -1,79 +1,51 @@
-#LOAD BALANCER - USIGN CONSISTENT HASHING 
+#Project Youtube Downloader
 
-##About
-Data Structures Programming Course
+#About
+
+Hackademy Python 101 Course
+
 May 2021
-<https://ocw.cs.pub.ro/courses/sd-ca/teme/tema2-2021>
-Student : Trandafir Laura Florina 313CA
+
+Students: Moroiu Alexandra-Maria, Pahontu Stefan-Alin, Profeanu Ioana, 
+          Trandafir Laura;
+
+Functionality: downloading youtube videos(MP4 of different qualities or MP3)
+               in a simple and easy way;
+
+Technologies:- tkinter for GUI;
+             - pytube and os(for downloading and chosing the file extension);
+
 #Implementation:
-hashring.c:
-    -hashring: a linked list that stores inside of a node, the id of the server, 
-                the replica id, the next server and the hash;
 
-    -hr_create: creates and initialize the linked list;
-    -hr_get_position_server: returns the position of the server on the hashring;
-    -hr_get_nth_server: returns the node at that certain position;
-    -hr_add_nth_node: adds a node on the hashring, with the id, replica id and
-                      hash given;
-    -hr_remove_nth_node: returns the nth node from the list;
-    -hr_get_size: returns the size of the hashring;
-    -hr_free: frees the list;
+class Youtube_Downloader: def __init__(self):
+                         -creates the window for the app, sets its color,
+                           width and height
+                         - adds labels for the user to insert the youtube
+                           link, to select the file name, the file path, and the download
+                           options;
+                         - receives the user input from buttons/labels, finds the
+                           file-path choose and gets the youtube link;
 
-server.c:
-    -server_memory: a hashtable that stores structure of info* type(key-value pair);
+                         def get_format:
+                         -chose format MP4(low resolution with the help of .get_lowest_resolution
+                          function or high resolution with get_highest_resolution function),
+                          the user can also chose MP3 format;
+                         -if the user did not choose a format it will pop up an error box;
 
-    -init_server_memory: creates and initialize the hashtable;
-    -server_store: first, we verify if there is already a key-value pair at that
-                    position, and if it is, we replace it, but if it is empty
-                    we store it there, by creating a structure and then
-                    add it with ll_add_nth_node, that adds a node at the n^th
-                    position;
-    -server_remove: removes the entry from the hashtable and free the data
-                    stored there;
-    -server_retrieve: returns the value stored at the given key;
-    -free_server_memory: frees the hashtable and all of its data
-                        (we go through all the buckets and free
-                        the information stored there);
+                         def is_valid_link:
+                         -checks if the download link is valid: if the tumbnail exist;
 
-load_balancer.c:
-    -load_balancer: stores the hashring(hr) and the linked list(my_list);
-    -init_load_balancer: creates and initialize the load_balancer;
-    -ll_retrieve_store: returns the value(the pointer to the server)
-                        from the node(from my_list) with the given server_id;
+                         def get_link:
+                         -checks the length of the link: if is null(there is no input link)
+                          an error box will pop up;
+                         -if the user inserts a non-youtube link, will show an error message;
+                         -if the user did not introduce a valid youtube link(the tumbnail does
+                          not exist) an error message will pop up;
+                         -gets the path where it will be downloaded and the name specified;
 
-    -loader_retrieve: returns the value, from the hashtable, where we store the
-                    given key: first, we find the hash to the key and
-                    return its position on the hashring with the function
-                    hr_get_position, then we return the node from the hr with
-                    hr_get_nth_node, here we extract the server id and go look
-                    for it in the linked list my_list, after we found the node,
-                    we return the pointer to its server, with ll_retrieve_store
-                    and then we use server_retrieve to look in this hashtable
-                    for the key given at the very begining;
+                         -def run:
+                         -the app flow;
 
-    -loader_add_server: first we add the server and its replicas on the hashring,
-                       then we create a new_struct, where we store the server_id
-                       and the pointer to the server and after that, we add
-                       new_struct as a node to my_list, we also verify each time
-                       we add a server to the hashring that we store the objects
-                       in the right servers;
-                       
-
-    -loader_remove_server: we erase the server and its replicas from the hashring,
-                          then we iterate through the linked list my_list until
-                          we find the node that stores the server id given,
-                          after that, we go to the server we want to remove
-                          and we iterate through its buckets, if we find one
-                          that is not null, we copy the key and value pair
-                          stored in it; we look on the hashring to see where
-                          should be stored and we stored them into a new server,
-                          and finally, we remove the node from my_list
-                          and remove the server with free_server_memory;
-
-
-
-                        
-
-
-
-
+                         def main():
+                         -define app as Youtube_Downloader;
+                         -runs the program;
