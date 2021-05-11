@@ -33,9 +33,9 @@ TITLE = "YouTube Downloader"
 TITLE_2 = "Download info"
 
 # define sounds
-download_complete_sound = 'download_complete_sound.mp3'
-error_sound = 'error_sound.mp3'
-help_sound = 'help_sound.mp3'
+download_complete_sound = 'download_complete_sound.wav'
+error_sound = 'error_sound.wav'
+help_sound = 'help_sound.wav'
 
 # function for finding and opening a directory
 def find_location():
@@ -182,7 +182,7 @@ you're good to go!")
 
     # initialise window for showing download information
     def new_window(self, link, path, name):
-        #initialise window geometry and background
+        # initialise window geometry and background
         self.window = tk.Toplevel()
         self.window.geometry("{}x{}".format(WIDTH_2, HEIGHT_2))
         self.window.configure(bg = RED)
@@ -197,6 +197,11 @@ you're good to go!")
         file = open("thumbnail.jpg", "wb")
         file.write(response.content)
         file.close()
+
+        # resize the thumbnail for the downlaod info window
+        thumbnail = Image.open('thumbnail.jpg')
+        resized_thumbnail = thumbnail.resize((WIDTH_2//2, HEIGHT_2//2))
+        resized_thumbnail.save('resized.jpg')
 
         # add youtube logo to the window
         self.youtube_2 = tk.PhotoImage(file='youtube_logo_2.png')
@@ -236,7 +241,7 @@ you're good to go!")
 
         # insert thumbnail image
         # use Pillow because Tkinter does not support jpg files
-        self.img = ImageTk.PhotoImage(Image.open("thumbnail.jpg"))
+        self.img = ImageTk.PhotoImage(Image.open("resized.jpg"))
         self.thumbnail_label = tk.Label(self.window, image = self.img)
         self.thumbnail_label["bg"] = RED
         self.thumbnail_label["border"] = "0"
@@ -295,6 +300,7 @@ you're good to go!")
         playsound(download_complete_sound)
 
         #remove thumbnail photo
+        os.remove("resized.jpg")
         os.remove("thumbnail.jpg")
 
         return
