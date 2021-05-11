@@ -6,6 +6,8 @@ from tkinter import messagebox
 from tkinter import *
 from playsound import playsound
 import os
+import requests
+from PIL import ImageTk, Image
 
 FOLDER_NAME = ""
 options = ["mp4 lowest quality", "mp4 highest highest", "mp3"]
@@ -13,11 +15,15 @@ options = ["mp4 lowest quality", "mp4 highest highest", "mp3"]
 WIDTH = 700
 HEIGHT = 550
 
+WIDTH_2 = 500
+HEIGHT_2 = 400
+
 WHITE = "#ffffff"
 RED = "#c4302b"
 BLACK = "#282828"
 
 TITLE = "YouTube Downloader"
+TITLE_2 = "Download info"
 
 download_complete_sound = 'download_complete_sound.mp3'
 error_sound = 'error_sound.mp3'
@@ -39,7 +45,7 @@ class Youtube_Downloader:
         # added labels
 
         # label for Youtube logo
-        self.youtube = tk.PhotoImage(file='youtube.png')
+        self.youtube = tk.PhotoImage(file='youtube_logo.png')
         self.youtube_image = tk.Label(self.window, image = self.youtube, bd=0, highlightthickness=0)
         self.youtube_image["bg"] = RED
         self.youtube_image["border"] = "0"
@@ -87,11 +93,11 @@ class Youtube_Downloader:
         self.empty_space.grid(column = 0, row = 1)
 
         # display entry for entering link
-        self.link_entry = tk.Entry(master = self.window, width = 60, font=("Petendo", 11, "bold"))
+        self.link_entry = tk.Entry(self.window, width = 60, font=("Petendo", 11, "bold"))
         self.link_entry.grid(column = 0, row = 4)
     
         # display entry for entering file name
-        self.name_entry = tk.Entry(master = self.window, width = 60, font=("Petendo", 11, "bold"))
+        self.name_entry = tk.Entry(self.window, width = 60, font=("Petendo", 11, "bold"))
         self.name_entry.grid(column = 0, row = 6)
 
         # display button image for choosing folder
@@ -125,12 +131,6 @@ class Youtube_Downloader:
     # choose format and download
     def get_format(self, link, save_path = "", save_name = ""):
         choice = self.option_box.get()
-
-        # check if a format chioce has been made, play sound and show error box
-        if len(choice) == 0:
-            playsound(error_sound)
-            messagebox.showerror('Required Fields', 'No Download Options selected!')
-            return
         
         yt = YouTube(link)
 
@@ -153,6 +153,64 @@ class Youtube_Downloader:
             new = base + ".mp3"
             os.rename(name, new)
 
+    # initialise window for showing download information
+    def new_window(self, link, path, name):
+        #initialise window geometry and background
+        self.window = tk.Toplevel()
+        self.window.geometry("{}x{}".format(WIDTH_2, HEIGHT_2))
+        self.window.configure(bg = RED)
+        self.window.title(TITLE_2)
+        # centering the labels
+        self.window.columnconfigure(0, weight = 1)
+
+        # get request for receiving the youtube thumbnail, then save the photo locally
+        thumbnail = YouTube(link).thumbnail_url
+        response = requests.get(thumbnail)
+        file = open("thumbnail.jpg", "wb")
+        file.write(response.content)
+        file.close()
+
+        # add youtube logo to the window
+        self.youtube_2 = tk.PhotoImage(file='youtube_logo_2.png')
+        self.youtube_label = tk.Button(self.window, image = self.youtube_2, command = self.get_link, bd=0, highlightthickness=0)
+        self.youtube_label["bg"] = RED
+        self.youtube_label["border"] = "0"
+        self.youtube_label.grid(column = 0, row = 0)
+
+        # add empty space
+        self.empty_space = tk.Label(self.window, bg = RED, fg = RED, text = "")
+        self.empty_space.grid(column = 0, row = 1)
+
+        # show message
+        self.message_text = tk.Label(self.window, width = 60, text = "Downloading file", font=("Petendo", 11, "bold"))
+        self.message_text["bg"] = RED
+        self.message_text["border"] = "0"
+        self.message_text.grid(column = 0, row = 2)
+
+        # add the YouTube name of the video
+        yt = YouTube(link)
+        youtube_name = yt.streams[0].title
+        self.message_text = tk.Label(self.window, width = 60, text = youtube_name, font=("Petendo", 11, "bold"))
+        self.message_text["bg"] = RED
+        self.message_text["border"] = "0"
+        self.message_text.grid(column = 0, row = 3)
+
+        # begin downloading the file (we do this here in order to give the thumbnail
+        # time to download)
+        self.get_format(link, path, name)
+
+        # add empty space
+        self.empty_space = tk.Label(self.window, bg = RED, fg = RED, text = "")
+        self.empty_space.grid(column = 0, row = 4)
+
+        # insert thumbnail image
+        # use Pillow because Tkinter does not support jpg files
+        self.img = ImageTk.PhotoImage(Image.open("thumbnail.jpg"))
+        self.thumbnail_label = tk.Label(self.window, image = self.img)
+        self.thumbnail_label["bg"] = RED
+        self.thumbnail_label["border"] = "0"
+        self.thumbnail_label.grid(column = 0, row = 5)
+        
     # check if the thumbnail of a  youtube link exists and if it doesn't, return False
     def is_valid_link(self, link):
         try:
@@ -183,13 +241,26 @@ class Youtube_Downloader:
             messagebox.showerror('Required Fields', 'Please provide a valid Youtube Link!')
             return
 
+        choice = self.option_box.get()
+
+        # check if a format chioce has been made, play sound and show error box
+        if len(choice) == 0:
+            playsound(error_sound)
+            messagebox.showerror('Required Fields', 'No Download Options selected!')
+            return
+
         # download
         path = FOLDER_NAME
         name = self.name_entry.get()
-        self.get_format(link, path, name)
+
+        # create new window with download information
+        self.new_window(link, path, name)
 
         # play sound after download is complete
         playsound(download_complete_sound)
+
+        #remove thumbnail photo
+        os.remove("thumbnail.jpg")
 
         return
 
@@ -198,6 +269,7 @@ class Youtube_Downloader:
         self.window.mainloop()
         return
 
+# main function
 def main():
     app = Youtube_Downloader()
     app.run()
