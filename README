@@ -13,39 +13,60 @@ Functionality: downloading youtube videos(MP4 of different qualities or MP3)
                in a simple and easy way;
 
 Technologies:- tkinter for GUI;
-             - pytube and os(for downloading and chosing the file extension);
+             - pytube and os(for downloading and choosing the file extension);
 
 #Implementation:
 
 class Youtube_Downloader: def __init__(self):
                          -creates the window for the app, sets its color,
                            width and height
-                         - adds labels for the user to insert the youtube
+                         -adds labels for the user to insert the youtube
                            link, to select the file name, the file path, and the download
                            options;
-                         - receives the user input from buttons/labels, finds the
-                           file-path choose and gets the youtube link;
+                         -receives the user input from buttons/labels, finds the
+                           chosen file-path and gets the youtube link;
+                         -shows the thumbnail of the video, with Pillow, because Tkinter
+                           does not support jpg files;
+                        
+                         def get_help:
+                         -if the user clicks on the icon from to the top left corner,
+                          a help window will pop up with a message presenting the instructions
+                          of how to use the program;
 
                          def get_format:
-                         -chose format MP4(low resolution with the help of .get_lowest_resolution
+                         -choose format MP4(low resolution with the help of .get_lowest_resolution
                           function or high resolution with get_highest_resolution function),
-                          the user can also chose MP3 format;
+                          the user can also choose MP3 format;
                          -if the user did not choose a format it will pop up an error box;
 
                          def is_valid_link:
-                         -checks if the download link is valid: if the tumbnail exist;
+                         -checks if the download link is valid: if the thumbnail exist;
 
                          def get_link:
-                         -checks the length of the link: if is null(there is no input link)
+                         -checks the length of the link: if it's null(there is no input link)
                           an error box will pop up;
                          -if the user inserts a non-youtube link, will show an error message;
-                         -if the user did not introduce a valid youtube link(the tumbnail does
+                         -if the user did not introduce a valid youtube link(the thumbnail does
                           not exist) an error message will pop up;
                          -gets the path where it will be downloaded and the name specified;
 
-                         -def run:
+                         def run:
                          -the app flow;
 
-                         def main():
+                         def main:
                          -define app as Youtube_Downloader;
-                         -runs the program;
+                         -runs the program.
+
+If the user receives sound errors he should change from wav to MP3
+
+#Programs to install in order for the app to work:
+
+-sudo apt install python3.8
+-sudo apt install python3-pip
+-pip install pytube
+-pip install Pillow
+-sudo apt install python3.8-tk
+-pip install request
+-pip install playsound
+-pip install os
+
